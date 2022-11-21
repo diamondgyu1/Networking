@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
 public class Server 
 {
     public static void main(String[] args) throws Exception
@@ -14,13 +13,52 @@ public class Server
         int port2 = Integer.parseInt(args[1]);
         ServerSocket ss = new ServerSocket(port1);
         ServerSocket ss2 = new ServerSocket(port2);
-        ArrayList<ArrayList<ClientInstance>> chatroom = new ArrayList<ArrayList<ClientInstance>>();
+        ArrayList<Chatroom> chatrooms = new ArrayList<>();
 
         while(true)
         {
             ClientInstance ci = new ClientInstance(ss);
-            
+            String[] start_command = ci.recieve().split(" ");
+            if (start_command[0].equals("#CREATE"))
+            {
+                Chatroom chatroom = new Chatroom(start_command[1]);
+                chatroom.clients.add(ci);
+                chatrooms.add(chatroom);
+                ci.chatroom_code = chatrooms.size()-1;
+                ci.clientName = start_command[2];
+                System.out.println("Client Joined: chatroom "+start_command[1]+", name "+ci.clientName);
+            }
+            else if (start_command[1].equals("#JOIN"))
+            {
+                for(int i = 0; i<chatrooms.size(); i++)
+                {
+                    if (chatrooms.get(i).chatroomName.equals(start_command[1]))
+                    {
+                        ci.chatroom_code = i;
+                        ci.clientName = start_command[2];
+                        chatrooms.get(i).clients.add(ci);
+                        System.out.println("Client Joined: chatroom "+start_command[1]+", name "+ci.clientName);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // do nothing
+            }
+
         }
+    }
+}
+
+class Chatroom
+{
+    String chatroomName;
+    ArrayList<ClientInstance> clients = new ArrayList<>();
+
+    public Chatroom(String chatroomName)
+    {
+        this.chatroomName = chatroomName;
     }
 }
 
@@ -29,6 +67,8 @@ class ClientInstance
     private Socket socket;
     private BufferedReader br;
     private PrintStream ps;
+    public String clientName;
+    public int chatroom_code;
 
     public ClientInstance(ServerSocket ss)
     {

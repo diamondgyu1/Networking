@@ -21,41 +21,20 @@ public class Client
                 String input = sc.nextLine();
                 String[] input_split = input.split(" ");
 
-                if (input_split[0].equals("#CREATE"))
-                {
+                Socket socket = new Socket("localhost",port1);
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintStream ps = new PrintStream(socket.getOutputStream());
+                
+                // System.out.println(input);
+                ps.println(input);
+                System.out.println("Sent Message");
 
-                } else if (input_split[0].equals("#JOIN"))
-                {
+                String msg = br.readLine();
+                System.out.println("MSG: "+msg);
 
-                } else if (input_split[0].equals("#PUT"))
-                {
-
-                } else if (input_split[0].equals("#GET"))
-                {
-
-                } else if (input_split[0].equals("#STATUS"))
-                {
-
-                } else if (input_split[0].equals("#EXIT"))
-                {
-                    break;
-
-                } else // just a text message
-                {
-                    Socket socket = new Socket("localhost",port1);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    PrintStream ps = new PrintStream(socket.getOutputStream());
-                    
-                    // System.out.println(input);
-                    ps.println(input);
-                    System.out.println("Sent Message");
-
-                    String msg = br.readLine();
-                    System.out.println("MSG: "+msg);
-
-                    socket.close();
-                    br.close();
-                }
+                socket.close();
+                br.close();
+                
             }
             catch(Exception e)
             {
@@ -63,6 +42,6 @@ public class Client
             }
         }
 
-        sc.close();
+        //sc.close();
     }
 }
