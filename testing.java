@@ -1,36 +1,37 @@
-class A
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+class Access
 {
     public static void main(String[] args) {
-        R rec = new R();
-        Thread t = new Thread(rec);
-        t.start();
-        System.out.println("thread started");
+        ArrayList<Integer> al = new ArrayList<>();
+        al.add(1);
 
-        try{
-            Thread.sleep(5000);
-        } catch(Exception e) { e.printStackTrace();}
+        B b = new B(al);
+        b.start();
 
-        System.out.println("thread terminating");
-        t.interrupt();
+        al.add(2);
+        System.out.println("Added");
 
-        // rec.flag = false;
+
     }
 }
 
-class R implements Runnable{
+class B extends Thread
+{
+    ArrayList<Integer> al;
 
-    boolean flag = true;
+    public B(ArrayList<Integer> al)
+    {
+        this.al = al;
+    }
 
     @Override
     public void run() {
-        while(true)
+        try{Thread.sleep(500);}catch(Exception e){}
+        for(int a:al)
         {
-            System.out.println("hi");
-            System.out.println(Thread.currentThread().isInterrupted());
-            try{
-                Thread.sleep(1000);
-            } catch(Exception e) { e.printStackTrace();}
-            
+            System.out.println(a);
         }
     }
 }
